@@ -17,8 +17,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void btnLoginClick(View view) {
         TextView txt = findViewById(R.id.login_title);
-        txt.setText("Other text");
+        //TODO: login user into the app
     }
 
-    //TODO: app
 }
