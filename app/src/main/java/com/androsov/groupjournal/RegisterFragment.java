@@ -1,5 +1,6 @@
 package com.androsov.groupjournal;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,12 +24,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
 import static com.androsov.groupjournal.MainActivity.db;
+import static com.androsov.groupjournal.MainActivity.imagesRef;
 import static com.androsov.groupjournal.MainActivity.mAuth;
 
 /**
@@ -104,10 +108,22 @@ public class RegisterFragment extends Fragment {
         user.put("last", "Lovelace");
         user.put("born", 1815);
 
+        Uri file = Uri.fromFile(new File("path/to/images/rivers.jpg"));
+        imagesRef.putFile(file)
+                .addOnSuccessListener(taskSnapshot -> {
+                    // Get a URL to the uploaded content
+//                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                })
+                .addOnFailureListener(exception -> {
+                    // Handle unsuccessful uploads
+                    // ...
+                });
+
         db.collection("group mates")
                 .add(user)
-                .addOnSuccessListener(documentReference -> Toast.makeText(getActivity(),"DocumentSnapshot added with ID: " + documentReference.getId(),
-                        Toast.LENGTH_SHORT).show())
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(getActivity(),"DocumentSnapshot added with ID: " + documentReference.getId(), Toast.LENGTH_SHORT).show();
+                })
                 .addOnFailureListener(e -> Toast.makeText(getActivity(),"Error adding document" + e,
                         Toast.LENGTH_SHORT).show());
 

@@ -14,11 +14,16 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class MainActivity extends AppCompatActivity {
     AppBarConfiguration appBarConfiguration;
     static FirebaseAuth mAuth;
     static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    static StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+    static StorageReference imagesRef = mStorageRef.child("images");
+    static StorageReference videosRef = mStorageRef.child("videos");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
