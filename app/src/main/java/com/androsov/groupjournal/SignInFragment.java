@@ -1,9 +1,11 @@
 package com.androsov.groupjournal;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.ActivityNavigator;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
@@ -75,35 +77,34 @@ public class SignInFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sign_in, container, false);;
+
         TextView button = (TextView) view.findViewById(R.id.addNewGroupMateLabel);
-        button.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                newMateClick(v);
-            }
-        });
+        button.setOnClickListener(v -> newMateClick(v));
+
+        Button loginBtn = (Button) view.findViewById(R.id.login_btn);
+        loginBtn.setOnClickListener(v -> btnLoginClick(v));
         return view;
     }
 
     public void btnLoginClick(View view) {
-        String email = "";
-        String password = "";
-
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            FirebaseUser user = mAuth.getCurrentUser();
-                        } else {
-                            Toast.makeText(getActivity(), "Authentication failed: " + task.getException(),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                });
+        Intent intent = new Intent(getActivity(), TabBarActivity.class);
+        startActivity(intent);
+//        String email = "";
+//        String password = "";
+//
+//        mAuth.signInWithEmailAndPassword(email, password)
+//                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()) {
+//                            FirebaseUser user = mAuth.getCurrentUser();
+//                        } else {
+//                            Toast.makeText(getActivity(), "Authentication failed: " + task.getException(),
+//                                    Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                    }
+//                });
     }
 
     public void newMateClick(View view) {
