@@ -2,6 +2,7 @@ package com.androsov.groupjournal;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
@@ -11,6 +12,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.concurrent.Executor;
+
+import static com.androsov.groupjournal.MainActivity.mAuth;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,10 +88,22 @@ public class SignInFragment extends Fragment {
     }
 
     public void btnLoginClick(View view) {
-        NavDirections action =
-                SignInFragmentDirections
-                        .actionSignInFragmentToRegisterFragment();
-        Navigation.findNavController(view).navigate(action);
+        String email = "";
+        String password = "";
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                        } else {
+                            Toast.makeText(getActivity(), "Authentication failed: " + task.getException(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
     }
 
     public void newMateClick(View view) {

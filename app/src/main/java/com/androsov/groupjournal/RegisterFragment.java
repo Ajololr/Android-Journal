@@ -2,6 +2,7 @@ package com.androsov.groupjournal;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
@@ -11,6 +12,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Executor;
+
+import static com.androsov.groupjournal.MainActivity.db;
+import static com.androsov.groupjournal.MainActivity.mAuth;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -77,6 +96,51 @@ public class RegisterFragment extends Fragment {
     }
 
     public void btnCreateClick(View view) {
+        String email = "";
+        String password = "";
+
+        Map<String, Object> user = new HashMap<>();
+        user.put("first", "Ada");
+        user.put("last", "Lovelace");
+        user.put("born", 1815);
+
+        db.collection("group mates")
+                .add(user)
+                .addOnSuccessListener(documentReference -> Toast.makeText(getActivity(),"DocumentSnapshot added with ID: " + documentReference.getId(),
+                        Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(getActivity(),"Error adding document" + e,
+                        Toast.LENGTH_SHORT).show());
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener((Executor) this, task -> {
+                    if (task.isSuccessful()) {
+                        System.out.println("createUserWithEmail");
+                        Toast.makeText(getActivity(), "Created new group mate",
+                                Toast.LENGTH_SHORT).show();
+                        FirebaseUser user1 = mAuth.getCurrentUser();
+
+                    } else {
+                        System.out.println("createUserWithEmail:failure" + task.getException());
+                        Toast.makeText(getActivity(), "Authentication failed: " + task.getException(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        db.collection("group mates")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                document.getData();
+                            }
+                        } else {
+                            Toast.makeText(getActivity(), "Error getting documents." + task.getException(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
     }
 
