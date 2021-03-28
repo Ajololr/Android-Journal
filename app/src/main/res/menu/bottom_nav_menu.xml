@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_group"
+        android:id="@+id/navigation_groupp"
         android:icon="@drawable/ic_action_group"
         android:title="@string/title_group" />
 

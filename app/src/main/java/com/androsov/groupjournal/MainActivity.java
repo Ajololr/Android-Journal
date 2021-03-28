@@ -18,10 +18,10 @@ import com.google.firebase.storage.StorageReference;
 public class MainActivity extends AppCompatActivity {
     AppBarConfiguration appBarConfiguration;
     static FirebaseAuth mAuth;
-    static FirebaseFirestore db = FirebaseFirestore.getInstance();
-    static StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
-    static StorageReference imagesRef = mStorageRef.child("images");
-    static StorageReference videosRef = mStorageRef.child("videos");
+    public static FirebaseFirestore db = FirebaseFirestore.getInstance();
+    public static StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+    public static StorageReference imagesRef = mStorageRef.child("images");
+    public static StorageReference videosRef = mStorageRef.child("videos");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
