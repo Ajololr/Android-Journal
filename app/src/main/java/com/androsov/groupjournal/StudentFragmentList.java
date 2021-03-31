@@ -56,13 +56,6 @@ public class StudentFragmentList extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try {
-            StudentsContent.refresh(recyclerViewAdapter);
-        } catch (Error error) {
-            Toast.makeText(getActivity(), error.getMessage(),
-                    Toast.LENGTH_SHORT).show();
-        }
-
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -84,6 +77,14 @@ public class StudentFragmentList extends Fragment {
             }
             System.out.println(StudentsContent.STUDENTS);
             recyclerViewAdapter = new MyStudentRecyclerViewAdapter(StudentsContent.STUDENTS);
+
+            try {
+                StudentsContent.refresh(recyclerViewAdapter);
+            } catch (Error error) {
+                Toast.makeText(getActivity(), error.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+
             recyclerView.setAdapter(recyclerViewAdapter);
         }
         return view;

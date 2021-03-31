@@ -6,9 +6,11 @@
     android:name="com.androsov.groupjournal.StudentFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:paddingTop="5dp"
     android:clipToPadding="false"
     app:layoutManager="LinearLayoutManager"
     tools:context=".StudentFragmentList"
-    tools:listitem="@layout/fragment_student" />
+    tools:listitem="@layout/fragment_student"
+    />

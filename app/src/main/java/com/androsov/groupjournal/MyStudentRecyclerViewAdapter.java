@@ -3,15 +3,24 @@ package com.androsov.groupjournal;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androsov.groupjournal.dummy.StudentsContent.Student;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -37,14 +46,30 @@ public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudent
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mImageView.setImageURI(Uri.parse(mValues.get(position).images.get(0)));
+        holder.mImageView.setImageBitmap(getImageBitmap(mValues.get(position).images.get(0)));
         holder.mNameText.setText(mValues.get(position).firstName + " " + mValues.get(position).lastName + " " + mValues.get(position).secondName);
-        holder.mBirthdayText.setText((CharSequence) mValues.get(position).birthday);
+        holder.mBirthdayText.setText(new SimpleDateFormat("yyyy-mm-dd").format(mValues.get(position).birthday));
     }
 
     @Override
     public int getItemCount() {
         return mValues.size();
+    }
+
+    private Bitmap getImageBitmap(String url) {
+        Bitmap bm = null;
+        try {
+            URL aURL = new URL(url);
+            URLConnection conn = aURL.openConnection();
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is);
+            bm = BitmapFactory.decodeStream(bis);
+            bis.close();
+            is.close();
+        } catch (IOException e) {
+        }
+        return bm;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

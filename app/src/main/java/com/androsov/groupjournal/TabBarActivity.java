@@ -1,6 +1,7 @@
 package com.androsov.groupjournal;
 
 import android.os.Bundle;
+import android.os.StrictMode;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -29,6 +30,9 @@ public class TabBarActivity extends AppCompatActivity {
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 
 }
