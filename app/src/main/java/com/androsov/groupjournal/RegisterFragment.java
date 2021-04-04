@@ -1,9 +1,11 @@
 package com.androsov.groupjournal;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -12,9 +14,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -22,10 +27,12 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.Executor;
 
 import static com.androsov.groupjournal.MainActivity.imagesRef;
 import static com.androsov.groupjournal.MainActivity.mAuth;
+import static com.androsov.groupjournal.MainActivity.db;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +65,7 @@ public class RegisterFragment extends Fragment {
     // TODO: Rename and change types and number of parameters
 
     final Calendar myCalendar = Calendar.getInstance();
-
+    Uri studentImageUri = null;
 
     public static RegisterFragment newInstance(String param1, String param2) {
         RegisterFragment fragment = new RegisterFragment();
@@ -78,48 +85,62 @@ public class RegisterFragment extends Fragment {
         }
     }
 
+    private void clearFields(View v) {
+        ((EditText) v.findViewById(R.id.edit_text_birthday_create)).setText("");
+        ((EditText) v.findViewById(R.id.edit_text_second_name_create)).setText("");
+        ((EditText) v.findViewById(R.id.edit_text_last_name_create)).setText("");
+        ((EditText) v.findViewById(R.id.edit_text_first_name_create)).setText("");
+        ((EditText) v.findViewById(R.id.edit_text_email_create)).setText("");
+        ((EditText) v.findViewById(R.id.edit_text_password_create)).setText("");
+        ((ImageView) v.findViewById(R.id.student_avatar_picker)).setImageDrawable(ContextCompat.getDrawable(getContext(),R.drawable.ic_photo_camera_black_48dp));
+        studentImageUri = null;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_register, container, false);;
-        Button button = (Button) view.findViewById(R.id.create_new_btn);
-        button.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                btnCreateClick(v);
-            }
-        });
+        Button button = view.findViewById(R.id.create_new_btn);
+        button.setOnClickListener(v -> btnCreateClick(v));
 
-        EditText edittext= (EditText) view.findViewById(R.id.edit_text_birthday_create);
-        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                // TODO Auto-generated method stub
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH, monthOfYear);
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-                String myFormat = "MM/dd/yy"; //In which you need put here
-                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-                edittext.setText(sdf.format(myCalendar.getTime()));
-            }
-
+        EditText edittext= view.findViewById(R.id.edit_text_birthday_create);
+        DatePickerDialog.OnDateSetListener date = (view1, year, monthOfYear, dayOfMonth) -> {
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            String myFormat = "MM/dd/yy";
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+            edittext.setText(sdf.format(myCalendar.getTime()));
         };
 
         edittext.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 new DatePickerDialog(getContext(), date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
+        });
+
+        ImageView imageView = view.findViewById(R.id.student_avatar_picker);
+        imageView.setOnClickListener(v -> {
+            ImagePicker.Companion.with(this)
+                .cropSquare()
+                .start((resultCode, data) -> {
+                    if (resultCode == Activity.RESULT_OK) {
+                        //Image Uri will not be null for RESULT_OK
+                        Uri fileUri = data.getData();
+                        imageView.setImageURI(fileUri);
+                        studentImageUri = fileUri;
+                    } else if (resultCode == ImagePicker.RESULT_ERROR) {
+                        Toast.makeText(getContext(), "Image picker error", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Task Cancelled", Toast.LENGTH_SHORT).show();
+                    }
+                    return null;
+                });
         });
         return view;
     }
@@ -131,51 +152,58 @@ public class RegisterFragment extends Fragment {
         String firstName = ((EditText) getView().findViewById(R.id.edit_text_first_name_create)).getText().toString();
         String lastName = ((EditText) getView().findViewById(R.id.edit_text_last_name_create)).getText().toString();
         String secondName = ((EditText) getView().findViewById(R.id.edit_text_second_name_create)).getText().toString();
+        String birthday = ((EditText) getView().findViewById(R.id.edit_text_birthday_create)).getText().toString();
 
-        if (email.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || secondName.isEmpty()) {
+        if (email.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || secondName.isEmpty() || birthday.isEmpty() || studentImageUri == null) {
             Toast.makeText(getActivity(), "Please, fill all the fields.",
                     Toast.LENGTH_LONG).show();
             return;
         }
 
-        Map<String, Object> user = new HashMap<>();
-        user.put("firstName", firstName);
-        user.put("lastName", lastName);
-        user.put("secondName", secondName);
-        user.put("birthday", myCalendar.getTime());
-        user.put("email", email);
+        StorageReference avatarRef = imagesRef.child(UUID.randomUUID() + ".jpg");
+        avatarRef.putFile(studentImageUri)
+            .addOnCompleteListener(taskSnapshot -> {
+                Map<String, Object> user = new HashMap<>();
+                user.put("firstName", firstName);
+                user.put("lastName", lastName);
+                user.put("secondName", secondName);
+                user.put("birthday", myCalendar.getTime());
+                user.put("email", email);
+                user.put("videoUrl", "");
+                user.put("latitude", "");
+                user.put("longitude", "");
+                try {
+                    avatarRef.getDownloadUrl().wait();
+                } catch(Exception exception) {
+                    Toast.makeText(getActivity(), exception.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                }
+                String[] images = { avatarRef.getDownloadUrl().getResult().toString() };
+                user.put("images", images);
 
-//         Uri file = Uri.fromFile(new File());
-//        imagesRef.putFile(file)
-//                .addOnSuccessListener(taskSnapshot -> {
-//                    // Get a URL to the uploaded content
-//                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-//                })
-//                .addOnFailureListener(exception -> {
-//                    // Handle unsuccessful uploads
-//                    // ...
-//                });
-
-//        db.collection("group mates")
-//                .add(user)
-//                .addOnSuccessListener(documentReference -> {
-//                    Toast.makeText(getActivity(),"DocumentSnapshot added with ID: " + documentReference.getId(), Toast.LENGTH_SHORT).show();
-//                })
-//                .addOnFailureListener(e -> Toast.makeText(getActivity(),"Error adding document" + e,
-//                        Toast.LENGTH_SHORT).show());
-
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(getActivity(), task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getActivity(), "Created new group mate",
-                                Toast.LENGTH_LONG).show();
-
-                    } else {
-                        System.out.println("createUserWithEmail:failure" + task.getException());
-                        Toast.makeText(getActivity(), "Authentication failed: " + task.getException().getLocalizedMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
+                db.collection("group mates")
+                    .add(user)
+                    .addOnSuccessListener(documentReference -> {
+                        mAuth.createUserWithEmailAndPassword(email, password)
+                                .addOnCompleteListener(getActivity(), task -> {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(getActivity(), "Created new group mate",
+                                                Toast.LENGTH_LONG).show();
+                                        clearFields(view);
+                                    } else {
+                                        System.out.println("createUserWithEmail:failure" + task.getException());
+                                        Toast.makeText(getActivity(), task.getException().getLocalizedMessage(),
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(getActivity(),"Error adding document: " + e,
+                            Toast.LENGTH_SHORT).show());
+            })
+            .addOnFailureListener(exception -> {
+                Toast.makeText(getActivity(),exception.getLocalizedMessage(),
+                        Toast.LENGTH_LONG).show();
+            });
 
 
     }
