@@ -1,5 +1,6 @@
 package com.androsov.groupjournal;
 
+import android.app.DatePickerDialog;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -9,16 +10,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseUser;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import static com.androsov.groupjournal.MainActivity.imagesRef;
 import static com.androsov.groupjournal.MainActivity.mAuth;
 
 /**
@@ -50,6 +56,10 @@ public class RegisterFragment extends Fragment {
      * @return A new instance of fragment RegisterFragment.
      */
     // TODO: Rename and change types and number of parameters
+
+    final Calendar myCalendar = Calendar.getInstance();
+
+
     public static RegisterFragment newInstance(String param1, String param2) {
         RegisterFragment fragment = new RegisterFragment();
         Bundle args = new Bundle();
@@ -82,6 +92,35 @@ public class RegisterFragment extends Fragment {
                 btnCreateClick(v);
             }
         });
+
+        EditText edittext= (EditText) view.findViewById(R.id.edit_text_birthday_create);
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                String myFormat = "MM/dd/yy"; //In which you need put here
+                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+                edittext.setText(sdf.format(myCalendar.getTime()));
+            }
+
+        };
+
+        edittext.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(getContext(), date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
         return view;
     }
 
@@ -89,18 +128,28 @@ public class RegisterFragment extends Fragment {
         EditText emailEditText = (EditText) getView().findViewById(R.id.edit_text_email_create);
         String email = emailEditText.getText().toString();
         String password = ((EditText) getView().findViewById(R.id.edit_text_password_create)).getText().toString();
+        String firstName = ((EditText) getView().findViewById(R.id.edit_text_first_name_create)).getText().toString();
+        String lastName = ((EditText) getView().findViewById(R.id.edit_text_last_name_create)).getText().toString();
+        String secondName = ((EditText) getView().findViewById(R.id.edit_text_second_name_create)).getText().toString();
 
+        if (email.isEmpty() || password.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || secondName.isEmpty()) {
+            Toast.makeText(getActivity(), "Please, fill all the fields.",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
 
         Map<String, Object> user = new HashMap<>();
-        user.put("first", "Ada");
-        user.put("last", "Lovelace");
-        user.put("born", 1815);
+        user.put("firstName", firstName);
+        user.put("lastName", lastName);
+        user.put("secondName", secondName);
+        user.put("birthday", myCalendar.getTime());
+        user.put("email", email);
 
-        Uri file = Uri.fromFile(new File("path/to/images/rivers.jpg"));
+//         Uri file = Uri.fromFile(new File());
 //        imagesRef.putFile(file)
 //                .addOnSuccessListener(taskSnapshot -> {
 //                    // Get a URL to the uploaded content
-////                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+//                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
 //                })
 //                .addOnFailureListener(exception -> {
 //                    // Handle unsuccessful uploads
@@ -118,14 +167,12 @@ public class RegisterFragment extends Fragment {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), task -> {
                     if (task.isSuccessful()) {
-                        System.out.println("createUserWithEmail");
                         Toast.makeText(getActivity(), "Created new group mate",
                                 Toast.LENGTH_LONG).show();
-                        FirebaseUser user1 = mAuth.getCurrentUser();
 
                     } else {
                         System.out.println("createUserWithEmail:failure" + task.getException());
-                        Toast.makeText(getActivity(), "Authentication failed: " + task.getException(),
+                        Toast.makeText(getActivity(), "Authentication failed: " + task.getException().getLocalizedMessage(),
                                 Toast.LENGTH_LONG).show();
                     }
                 });
