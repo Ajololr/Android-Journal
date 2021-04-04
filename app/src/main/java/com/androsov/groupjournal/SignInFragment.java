@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -89,17 +90,18 @@ public class SignInFragment extends Fragment {
     public void btnLoginClick(View view) {
         Intent intent = new Intent(getActivity(), TabBarActivity.class);
         startActivity(intent);
-//        String email = "";
-//        String password = "";
-//
+        String email = ((EditText) view.findViewById(R.id.editTextTextEmailAddress)).getText().toString();
+        String password = ((EditText) view.findViewById(R.id.edit_text_password_login)).getText().toString();
+
 //        mAuth.signInWithEmailAndPassword(email, password)
 //                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
 //                    @Override
 //                    public void onComplete(@NonNull Task<AuthResult> task) {
 //                        if (task.isSuccessful()) {
 //                            FirebaseUser user = mAuth.getCurrentUser();
+//                            startActivity(intent);
 //                        } else {
-//                            Toast.makeText(getActivity(), "Authentication failed: " + task.getException(),
+//                            Toast.makeText(getActivity(), "Authentication failed: " + task.getException().getLocalizedMessage(),
 //                                    Toast.LENGTH_SHORT).show();
 //                        }
 //
