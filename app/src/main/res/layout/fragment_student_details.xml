@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".StudentDetailsFragment"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/student_avatar_picker_edit"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/ic_photo_camera_black_48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/last_name_edit"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="@string/last_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/student_avatar_picker_edit" />
+
+    <EditText
+        android:id="@+id/first_name_edit"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="@string/first_name"
+        app:layout_constraintEnd_toEndOf="@+id/last_name_edit"
+        app:layout_constraintStart_toStartOf="@+id/last_name_edit"
+        app:layout_constraintTop_toBottomOf="@+id/last_name_edit" />
+
+    <EditText
+        android:id="@+id/second_name_edit"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="@string/second_name"
+        app:layout_constraintEnd_toEndOf="@+id/last_name_edit"
+        app:layout_constraintStart_toStartOf="@+id/last_name_edit"
+        app:layout_constraintTop_toBottomOf="@+id/first_name_edit" />
+
+    <EditText
+        android:id="@+id/birthday_edit"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="@string/birthday_txt"
+        app:layout_constraintEnd_toEndOf="@+id/last_name_edit"
+        app:layout_constraintStart_toStartOf="@+id/last_name_edit"
+        app:layout_constraintTop_toBottomOf="@+id/second_name_edit" />
+
+    <EditText
+        android:id="@+id/latitude_edit"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="@string/latitude"
+        app:layout_constraintStart_toStartOf="@+id/last_name_edit"
+        app:layout_constraintTop_toBottomOf="@+id/birthday_edit" />
+
+    <EditText
+        android:id="@+id/longitude_edit"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:hint="@string/longitude"
+        app:layout_constraintEnd_toEndOf="@+id/birthday_edit"
+        app:layout_constraintTop_toBottomOf="@+id/birthday_edit" />
+
+    <Button
+        android:id="@+id/load_video_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/load_video"
+        app:layout_constraintEnd_toEndOf="@+id/longitude_edit"
+        app:layout_constraintStart_toStartOf="@+id/longitude_edit"
+        app:layout_constraintTop_toBottomOf="@+id/longitude_edit" />
+
+    <Button
+        android:id="@+id/watch_video_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/watch_video"
+        app:layout_constraintEnd_toEndOf="@+id/latitude_edit"
+        app:layout_constraintStart_toStartOf="@+id/latitude_edit"
+        app:layout_constraintTop_toBottomOf="@+id/latitude_edit" />
+
+    <Button
+        android:id="@+id/save_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gallery_btn" />
+
+    <Button
+        android:id="@+id/gallery_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Gallery"
+        app:layout_constraintEnd_toEndOf="@+id/load_video_btn"
+        app:layout_constraintStart_toStartOf="@+id/watch_video_btn"
+        app:layout_constraintTop_toBottomOf="@+id/watch_video_btn" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

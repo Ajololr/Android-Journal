@@ -12,6 +12,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,16 +61,16 @@ public class StudentsContent {
 
     }
 
-    public static class Student {
-        public final String id;
-        public final String firstName;
-        public final String lastName;
-        public final String secondName;
-        public final String latitude;
-        public final String longitude;
-        public final ArrayList<String> images;
-        public final Date birthday;
-        public final String videoUrl;
+    public static class Student implements Serializable {
+        public String id;
+        public String firstName;
+        public String lastName;
+        public String secondName;
+        public String latitude;
+        public String longitude;
+        public ArrayList<String> images;
+        public Date birthday;
+        public String videoUrl;
 
         public Student(String id, String firstName, String lastName, String secondName, String latitude, String longitude, ArrayList<String> images, Date birthday, String videoUrl) {
             this.id = id;
@@ -82,6 +83,8 @@ public class StudentsContent {
             this.birthday = birthday;
             this.videoUrl = videoUrl;
         }
+
+        public Student() {}
 
         @Override
         public String toString() {

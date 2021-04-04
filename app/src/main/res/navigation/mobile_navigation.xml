@@ -20,5 +20,19 @@
         android:id="@+id/navigation_group"
         android:name="com.androsov.groupjournal.StudentFragmentList"
         android:label="@string/title_group"
-        tools:layout="@layout/fragment_student_list" />
+        tools:layout="@layout/fragment_student_list" >
+        <action
+            android:id="@+id/action_navigation_group_to_studentDetailsFragment"
+            app:destination="@id/studentDetailsFragment"
+            app:launchSingleTop="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/studentDetailsFragment"
+        android:name="com.androsov.groupjournal.StudentDetailsFragment"
+        android:label="fragment_student_details"
+        tools:layout="@layout/fragment_student_details" >
+        <argument
+            android:name="studentData"
+            app:argType="com.androsov.groupjournal.dummy.StudentsContent$Student" />
+    </fragment>
 </navigation>

@@ -1,5 +1,7 @@
 package com.androsov.groupjournal;
 
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -23,10 +25,6 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link Student}.
- * TODO: Replace the implementation with code for your data type.
- */
 public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudentRecyclerViewAdapter.ViewHolder> {
 
     private final List<Student> mValues;
@@ -85,6 +83,12 @@ public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudent
             mImageView = (ImageView) view.findViewById(R.id.student_avatar);
             mNameText = (TextView) view.findViewById(R.id.student_name);
             mBirthdayText = (TextView) view.findViewById(R.id.student_birthday);
+            mView.setOnClickListener(v -> {
+                NavDirections action =
+                        StudentFragmentListDirections
+                                .actionNavigationGroupToStudentDetailsFragment(mItem);
+                Navigation.findNavController(view).navigate(action);
+            });
         }
 
         @Override
