@@ -32,6 +32,7 @@ import static com.androsov.groupjournal.MainActivity.mAuth;
  * create an instance of this fragment.
  */
 public class SignInFragment extends Fragment {
+    View v;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -78,20 +79,21 @@ public class SignInFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_sign_in, container, false);;
+        v = view;
 
         TextView button = (TextView) view.findViewById(R.id.addNewGroupMateLabel);
-        button.setOnClickListener(v -> newMateClick(v));
+        button.setOnClickListener(v -> newMateClick());
 
         Button loginBtn = (Button) view.findViewById(R.id.login_btn);
-        loginBtn.setOnClickListener(v -> btnLoginClick(v));
+        loginBtn.setOnClickListener(v -> btnLoginClick());
         return view;
     }
 
-    public void btnLoginClick(View view) {
+    public void btnLoginClick() {
         Intent intent = new Intent(getActivity(), TabBarActivity.class);
         startActivity(intent);
-        String email = ((EditText) view.findViewById(R.id.editTextTextEmailAddress)).getText().toString();
-        String password = ((EditText) view.findViewById(R.id.edit_text_password_login)).getText().toString();
+        String email = ((EditText) v.findViewById(R.id.editTextTextEmailAddress)).getText().toString();
+        String password = ((EditText) v.findViewById(R.id.edit_text_password_login)).getText().toString();
 
 //        mAuth.signInWithEmailAndPassword(email, password)
 //                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
@@ -109,10 +111,10 @@ public class SignInFragment extends Fragment {
 //                });
     }
 
-    public void newMateClick(View view) {
+    public void newMateClick() {
         NavDirections action =
                 SignInFragmentDirections
                         .actionSignInFragmentToRegisterFragment();
-        Navigation.findNavController(view).navigate(action);
+        Navigation.findNavController(v).navigate(action);
     }
 }

@@ -14,35 +14,66 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.androsov.groupjournal.dummy.StudentsContent;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import static com.androsov.groupjournal.MainActivity.db;
 
-/**
- * A fragment representing a list of Items.
- */
+
 public class StudentFragmentList extends Fragment {
     public MyStudentRecyclerViewAdapter recyclerViewAdapter;
+    View view;
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 2;
+    private ArrayList<Student> studentArrayList;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public StudentFragmentList() {
+
+     public StudentFragmentList() {
+        studentArrayList = new ArrayList<>();
+        db.collection("group mates")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Student student = (Student) document.toObject(Student.class);
+                                student.id = document.getId();
+                                studentArrayList.add(student);
+                            }
+                        } else {
+
+                        };
+                        if (view != null) {
+                            setData();
+                        }
+                    }
+                });
     }
 
-    // TODO: Customize parameter initialization
+    public void setData() {
+        // Set the adapter
+        if (view instanceof RecyclerView) {
+            Context context = view.getContext();
+            RecyclerView recyclerView = (RecyclerView) view;
+            if (mColumnCount <= 1) {
+                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            } else {
+                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            }
+            recyclerViewAdapter = new MyStudentRecyclerViewAdapter(studentArrayList);
+
+            recyclerView.setAdapter(recyclerViewAdapter);
+        }
+    }
+
     @SuppressWarnings("unused")
     public static StudentFragmentList newInstance(int columnCount) {
         StudentFragmentList fragment = new StudentFragmentList();
@@ -64,29 +95,9 @@ public class StudentFragmentList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_student_list, container, false);
+         view = inflater.inflate(R.layout.fragment_student_list, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            System.out.println(StudentsContent.STUDENTS);
-            recyclerViewAdapter = new MyStudentRecyclerViewAdapter(StudentsContent.STUDENTS);
-
-            try {
-                StudentsContent.refresh(recyclerViewAdapter);
-            } catch (Error error) {
-                Toast.makeText(getActivity(), error.getMessage(),
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            recyclerView.setAdapter(recyclerViewAdapter);
-        }
+        setData();
         return view;
     }
 }

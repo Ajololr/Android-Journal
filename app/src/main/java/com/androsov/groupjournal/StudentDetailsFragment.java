@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.androsov.groupjournal.dummy.StudentsContent;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.firebase.storage.StorageReference;
 
@@ -46,14 +45,17 @@ public class StudentDetailsFragment extends Fragment {
     Uri studentVideoUri = null;
     View v;
 
-    private StudentsContent.Student studentData;
+    private Student studentData;
 
     public StudentDetailsFragment() {
-        // Required empty public constructor
     }
 
-    public static StudentDetailsFragment newInstance(StudentsContent.Student studentData) {
-        StudentDetailsFragment fragment = new StudentDetailsFragment();
+    public StudentDetailsFragment(Student student) {
+        studentData = student;
+    }
+
+    public static StudentDetailsFragment newInstance(Student studentData) {
+        StudentDetailsFragment fragment = new StudentDetailsFragment(studentData);
         Bundle args = new Bundle();
         args.putSerializable(ARG_PARAM1, studentData);
         fragment.setArguments(args);
@@ -64,14 +66,13 @@ public class StudentDetailsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            studentData = (StudentsContent.Student) getArguments().getSerializable(ARG_PARAM1);
+            studentData = (Student) getArguments().getSerializable(ARG_PARAM1);
         }
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        StudentsContent.Student student = StudentDetailsFragmentArgs.fromBundle(getArguments()).getStudentData();
-
+        Student student = studentData;
         myCalendar.setTime(student.birthday);
         EditText birthdayEdit = view.findViewById(R.id.birthday_edit);
         String myFormat = "MM/dd/yy";

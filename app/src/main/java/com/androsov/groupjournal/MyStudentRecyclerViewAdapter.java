@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androsov.groupjournal.dummy.StudentsContent.Student;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -84,10 +83,10 @@ public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudent
             mNameText = (TextView) view.findViewById(R.id.student_name);
             mBirthdayText = (TextView) view.findViewById(R.id.student_birthday);
             mView.setOnClickListener(v -> {
-                NavDirections action =
-                        StudentFragmentListDirections
-                                .actionNavigationGroupToStudentDetailsFragment(mItem);
-                Navigation.findNavController(view).navigate(action);
+                TabBarActivity tabBarActivity = (TabBarActivity) view.getContext();
+                StudentDetailsFragment studentDetailsFragment = new StudentDetailsFragment(mItem);
+                tabBarActivity.setFragment(studentDetailsFragment, mItem.lastName);
+                tabBarActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             });
         }
 
