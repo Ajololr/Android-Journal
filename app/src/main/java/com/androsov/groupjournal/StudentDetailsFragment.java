@@ -43,6 +43,8 @@ public class StudentDetailsFragment extends Fragment {
 
     final Calendar myCalendar = Calendar.getInstance();
     Uri studentImageUri = null;
+    Uri studentVideoUri = null;
+    View v;
 
     private StudentsContent.Student studentData;
 
@@ -80,7 +82,6 @@ public class StudentDetailsFragment extends Fragment {
         ((EditText) view.findViewById(R.id.second_name_edit)).setText(student.secondName);
         ((EditText) view.findViewById(R.id.latitude_edit)).setText(student.latitude);
         ((EditText) view.findViewById(R.id.longitude_edit)).setText(student.longitude);
-        ((ImageView) view.findViewById(R.id.student_avatar_picker_edit)).setImageURI( Uri.parse(student.images.get(0)));
         ((Button) view.findViewById(R.id.watch_video_btn)).setEnabled(!student.videoUrl.isEmpty());
 
         studentImageUri = Uri.parse(student.images.get(0));
@@ -94,49 +95,30 @@ public class StudentDetailsFragment extends Fragment {
         String latitude = ((EditText) getView().findViewById(R.id.latitude_edit)).getText().toString();
         String longitude = ((EditText) getView().findViewById(R.id.longitude_edit)).getText().toString();
 
-        if (firstName.isEmpty() || lastName.isEmpty() || secondName.isEmpty() || birthday.isEmpty() || studentImageUri == null) {
+        if (firstName.isEmpty() || lastName.isEmpty() || secondName.isEmpty() || birthday.isEmpty() || latitude.isEmpty() || longitude.isEmpty()) {
             Toast.makeText(getActivity(), "Please, fill all the fields.",
                     Toast.LENGTH_LONG).show();
             return;
         }
 
-        StorageReference avatarRef = imagesRef.child(UUID.randomUUID() + ".jpg");
-        avatarRef.putFile(studentImageUri)
-                .addOnCompleteListener(taskSnapshot -> {
-                    Map<String, Object> user = new HashMap<>();
-                    user.put("firstName", firstName);
-                    user.put("lastName", lastName);
-                    user.put("secondName", secondName);
-                    user.put("birthday", myCalendar.getTime());
-                    user.put("videoUrl", "");
-                    user.put("latitude", latitude);
-                    user.put("longitude", longitude);
-                    try {
-                        avatarRef.getDownloadUrl().wait();
-                    } catch(Exception exception) {
-                        Toast.makeText(getActivity(), exception.getMessage(),
-                                Toast.LENGTH_LONG).show();
-                    }
-                    studentData.images.set(0, avatarRef.getDownloadUrl().getResult().toString());
-                    String[] images = (String[]) studentData.images.toArray();
-                    user.put("images", images);
+        Map<String, Object> user = new HashMap<>();
+        user.put("firstName", firstName);
+        user.put("lastName", lastName);
+        user.put("secondName", secondName);
+        user.put("birthday", myCalendar.getTime());
+//        user.put("videoUrl", "");
+        user.put("latitude", latitude);
+        user.put("longitude", longitude);
 
-                    db.collection("group mates")
-                            .document(studentData.id)
-                            .set(user)
-                            .addOnSuccessListener(documentReference -> {
-                                Toast.makeText(getActivity(), "Updated group mate",
-                                        Toast.LENGTH_LONG).show();
-                            })
-                            .addOnFailureListener(e -> Toast.makeText(getActivity(),"Error adding document: " + e,
-                                    Toast.LENGTH_SHORT).show());
-                })
-                .addOnFailureListener(exception -> {
-                    Toast.makeText(getActivity(),exception.getLocalizedMessage(),
-                            Toast.LENGTH_LONG).show();
-                });
-
-
+        db.collection("group mates")
+            .document(studentData.id)
+            .update(user)
+            .addOnSuccessListener(documentReference -> {
+                Toast.makeText(getActivity(), "Updated group mate",
+                        Toast.LENGTH_LONG).show();
+            })
+            .addOnFailureListener(e -> Toast.makeText(getActivity(),"Error adding document: " + e,
+                    Toast.LENGTH_SHORT).show());
     }
 
     private void playVideo(View view) {
@@ -154,7 +136,7 @@ public class StudentDetailsFragment extends Fragment {
 
     private void loadVideo(View view) {
         try {
-            ((Button) view.findViewById(R.id.watch_video_btn)).setEnabled(true);
+            ((Button) v.findViewById(R.id.watch_video_btn)).setEnabled(true);
         } catch (Exception exception) {
             Toast.makeText(getActivity(),exception.getLocalizedMessage(),
                     Toast.LENGTH_LONG).show();
@@ -166,6 +148,7 @@ public class StudentDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_student_details, container, false);
+        v = view;
 
         EditText edittext= view.findViewById(R.id.birthday_edit);
         DatePickerDialog.OnDateSetListener date = (view1, year, monthOfYear, dayOfMonth) -> {
@@ -180,25 +163,6 @@ public class StudentDetailsFragment extends Fragment {
         edittext.setOnClickListener(v -> new DatePickerDialog(getContext(), date, myCalendar
                 .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                 myCalendar.get(Calendar.DAY_OF_MONTH)).show());
-
-        ImageView imageView = view.findViewById(R.id.student_avatar_picker_edit);
-        imageView.setOnClickListener(v -> {
-            ImagePicker.Companion.with(this)
-                    .cropSquare()
-                    .start((resultCode, data) -> {
-                        if (resultCode == Activity.RESULT_OK) {
-                            //Image Uri will not be null for RESULT_OK
-                            Uri fileUri = data.getData();
-                            imageView.setImageURI(fileUri);
-                            studentImageUri = fileUri;
-                        } else if (resultCode == ImagePicker.RESULT_ERROR) {
-                            Toast.makeText(getContext(), "Image picker error", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getContext(), "Task Cancelled", Toast.LENGTH_SHORT).show();
-                        }
-                        return null;
-                    });
-        });
 
         view.findViewById(R.id.watch_video_btn).setOnClickListener(this::playVideo);
         view.findViewById(R.id.save_btn).setOnClickListener(this::btnSaveClick);

@@ -54,7 +54,7 @@ public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudent
         return mValues.size();
     }
 
-    private Bitmap getImageBitmap(String url) {
+    public static Bitmap getImageBitmap(String url) {
         Bitmap bm = null;
         try {
             URL aURL = new URL(url);

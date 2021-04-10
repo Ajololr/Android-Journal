@@ -23,6 +23,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -40,6 +41,7 @@ import static com.androsov.groupjournal.MainActivity.db;
  * create an instance of this fragment.
  */
 public class RegisterFragment extends Fragment {
+    private View v;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -85,7 +87,7 @@ public class RegisterFragment extends Fragment {
         }
     }
 
-    private void clearFields(View v) {
+    private void clearFields() {
         ((EditText) v.findViewById(R.id.edit_text_birthday_create)).setText("");
         ((EditText) v.findViewById(R.id.edit_text_second_name_create)).setText("");
         ((EditText) v.findViewById(R.id.edit_text_last_name_create)).setText("");
@@ -101,6 +103,7 @@ public class RegisterFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_register, container, false);;
+        v = view;
         Button button = view.findViewById(R.id.create_new_btn);
         button.setOnClickListener(v -> btnCreateClick(v));
 
@@ -162,7 +165,7 @@ public class RegisterFragment extends Fragment {
 
         StorageReference avatarRef = imagesRef.child(UUID.randomUUID() + ".jpg");
         avatarRef.putFile(studentImageUri)
-            .addOnCompleteListener(taskSnapshot -> {
+            .addOnSuccessListener(taskSnapshot -> {
                 Map<String, Object> user = new HashMap<>();
                 user.put("firstName", firstName);
                 user.put("lastName", lastName);
@@ -172,33 +175,31 @@ public class RegisterFragment extends Fragment {
                 user.put("videoUrl", "");
                 user.put("latitude", "");
                 user.put("longitude", "");
-                try {
-                    avatarRef.getDownloadUrl().wait();
-                } catch(Exception exception) {
-                    Toast.makeText(getActivity(), exception.getMessage(),
-                            Toast.LENGTH_LONG).show();
-                }
-                String[] images = { avatarRef.getDownloadUrl().getResult().toString() };
-                user.put("images", images);
 
-                db.collection("group mates")
-                    .add(user)
-                    .addOnSuccessListener(documentReference -> {
-                        mAuth.createUserWithEmailAndPassword(email, password)
-                                .addOnCompleteListener(getActivity(), task -> {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(getActivity(), "Created new group mate",
-                                                Toast.LENGTH_LONG).show();
-                                        clearFields(view);
-                                    } else {
-                                        System.out.println("createUserWithEmail:failure" + task.getException());
-                                        Toast.makeText(getActivity(), task.getException().getLocalizedMessage(),
-                                                Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(getActivity(),"Error adding document: " + e,
-                            Toast.LENGTH_SHORT).show());
+                avatarRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    ArrayList<String> images = new ArrayList<>();
+                    images.add(uri.toString());
+                    user.put("images", images);
+
+                    db.collection("group mates")
+                            .add(user)
+                            .addOnSuccessListener(documentReference -> {
+                                mAuth.createUserWithEmailAndPassword(email, password)
+                                        .addOnCompleteListener(getActivity(), task -> {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(getActivity(), "Created new group mate",
+                                                        Toast.LENGTH_LONG).show();
+                                                clearFields();
+                                            } else {
+                                                System.out.println("createUserWithEmail:failure" + task.getException());
+                                                Toast.makeText(getActivity(), task.getException().getLocalizedMessage(),
+                                                        Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                            })
+                            .addOnFailureListener(e -> Toast.makeText(getActivity(),"Error adding document: " + e,
+                                    Toast.LENGTH_SHORT).show());
+                });
             })
             .addOnFailureListener(exception -> {
                 Toast.makeText(getActivity(),exception.getLocalizedMessage(),

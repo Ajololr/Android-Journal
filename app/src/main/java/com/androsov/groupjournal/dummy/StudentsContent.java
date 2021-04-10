@@ -38,26 +38,26 @@ public class StudentsContent {
         ITEM_MAP.clear();
 
         db.collection("group mates")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Map<String, Object> documentData = document.getData();
-                            addItem(new Student(document.getId(),(String) documentData.get("firstName"),
-                                    (String) documentData.get("lastName"),
-                                    (String) documentData.get("secondName"),
-                                    (String) documentData.get("latitude"),
-                                    (String) documentData.get("longitude"),
-                                    (ArrayList<String>) documentData.get("images"),
-                                    ((Timestamp) documentData.get("birthday")).toDate(),
-                                    (String) documentData.get("videoUrl")));
-                        }
-                    } else {
-                        System.out.println(task.getException());
-                        throw new Error( "Error getting documents: " + task.getException());
+            .get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Map<String, Object> documentData = document.getData();
+                        addItem(new Student(document.getId(),(String) documentData.get("firstName"),
+                                (String) documentData.get("lastName"),
+                                (String) documentData.get("secondName"),
+                                (String) documentData.get("latitude"),
+                                (String) documentData.get("longitude"),
+                                (ArrayList<String>) documentData.get("images"),
+                                ((Timestamp) documentData.get("birthday")).toDate(),
+                                (String) documentData.get("videoUrl")));
                     }
-                    mAdapter.notifyDataSetChanged();
-                });
+                } else {
+                    System.out.println(task.getException());
+                    throw new Error( "Error getting documents: " + task.getException());
+                }
+                mAdapter.notifyDataSetChanged();
+            });
 
     }
 
