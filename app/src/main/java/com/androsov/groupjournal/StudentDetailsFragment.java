@@ -2,6 +2,7 @@ package com.androsov.groupjournal;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,9 +18,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -28,6 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import static android.app.Activity.RESULT_OK;
 import static com.androsov.groupjournal.MainActivity.db;
 import static com.androsov.groupjournal.MainActivity.imagesRef;
 import static com.androsov.groupjournal.MainActivity.mAuth;
@@ -83,7 +90,12 @@ public class StudentDetailsFragment extends Fragment {
         ((EditText) view.findViewById(R.id.second_name_edit)).setText(student.secondName);
         ((EditText) view.findViewById(R.id.latitude_edit)).setText(student.latitude);
         ((EditText) view.findViewById(R.id.longitude_edit)).setText(student.longitude);
-        ((Button) view.findViewById(R.id.watch_video_btn)).setEnabled(!student.videoUrl.isEmpty());
+        VideoView videoView = view.findViewById(R.id.videoView);
+
+        if (!student.videoUrl.isEmpty()) {
+            videoView.setVideoURI(Uri.parse(student.videoUrl));
+            videoView.start();
+        }
 
         studentImageUri = Uri.parse(student.images.get(0));
     }
@@ -107,7 +119,6 @@ public class StudentDetailsFragment extends Fragment {
         user.put("lastName", lastName);
         user.put("secondName", secondName);
         user.put("birthday", myCalendar.getTime());
-//        user.put("videoUrl", "");
         user.put("latitude", latitude);
         user.put("longitude", longitude);
 
@@ -122,12 +133,11 @@ public class StudentDetailsFragment extends Fragment {
                     Toast.LENGTH_SHORT).show());
     }
 
-    private void playVideo(View view) {
+    private void loadVideo(View view) {
         try {
-            MediaPlayer mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(studentData.videoUrl);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
+            Intent videoPicker = new Intent(Intent.ACTION_PICK);
+            videoPicker.setType("video/*");
+            startActivityForResult(videoPicker, 2);
         } catch (Exception exception) {
             Toast.makeText(getActivity(),exception.getLocalizedMessage(),
                     Toast.LENGTH_LONG).show();
@@ -135,14 +145,55 @@ public class StudentDetailsFragment extends Fragment {
 
     }
 
-    private void loadVideo(View view) {
-        try {
-            ((Button) v.findViewById(R.id.watch_video_btn)).setEnabled(true);
-        } catch (Exception exception) {
-            Toast.makeText(getActivity(),exception.getLocalizedMessage(),
-                    Toast.LENGTH_LONG).show();
-        }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        switch (requestCode) {
+            case 2 : {
+                if (resultCode == RESULT_OK){
+                    final Uri videoUri = data.getData();
+
+                    String videoName = UUID.randomUUID().toString();
+                    StorageReference videoRef = MainActivity.videosRef.child(videoName);
+
+                    UploadTask uploadTask = videoRef.putFile(videoUri);
+                    Task<Uri> urlTask = uploadTask.continueWithTask(task -> {
+                        if (!task.isSuccessful()) {
+                            throw task.getException();
+                        }
+
+                        // Continue with the task to get the download URL
+                        return videoRef.getDownloadUrl();
+                    }).addOnCompleteListener(task -> {
+
+                        if (task.isSuccessful()) {
+
+                            studentVideoUri =  task.getResult();
+                        Map<String, Object> user = new HashMap<>();
+                        user.put("videoUrl", String.valueOf(task.getResult()));
+
+                        db.collection("group mates")
+                                .document(studentData.id)
+                                .update(user)
+                                .addOnSuccessListener(documentReference -> {
+                                    Toast.makeText(getActivity(), "Updated group mate",
+                                            Toast.LENGTH_LONG).show();
+
+                                    VideoView videoView = v.findViewById(R.id.videoView);
+
+                                        videoView.setVideoURI(studentVideoUri);
+                                        videoView.start();
+
+                                })
+                                .addOnFailureListener(e -> Toast.makeText(getActivity(),"Error adding document: " + e,
+                                        Toast.LENGTH_SHORT).show());
+                        }
+                    });
+                }
+                break;
+            }
+        }
     }
 
     @Override
@@ -165,7 +216,6 @@ public class StudentDetailsFragment extends Fragment {
                 .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                 myCalendar.get(Calendar.DAY_OF_MONTH)).show());
 
-        view.findViewById(R.id.watch_video_btn).setOnClickListener(this::playVideo);
         view.findViewById(R.id.save_btn).setOnClickListener(this::btnSaveClick);
         view.findViewById(R.id.load_video_btn).setOnClickListener(this::loadVideo);
 
