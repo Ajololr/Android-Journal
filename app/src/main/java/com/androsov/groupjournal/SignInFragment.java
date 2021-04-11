@@ -104,25 +104,24 @@ public class SignInFragment extends Fragment {
     }
 
     public void btnLoginClick() {
-        Intent intent = new Intent(getActivity(), TabBarActivity.class);
-        startActivity(intent);
         String email = ((EditText) v.findViewById(R.id.editTextTextEmailAddress)).getText().toString();
         String password = ((EditText) v.findViewById(R.id.edit_text_password_login)).getText().toString();
 
-//        mAuth.signInWithEmailAndPassword(email, password)
-//                .addOnCompleteListener((Executor) this, new OnCompleteListener<AuthResult>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<AuthResult> task) {
-//                        if (task.isSuccessful()) {
-//                            FirebaseUser user = mAuth.getCurrentUser();
-//                            startActivity(intent);
-//                        } else {
-//                            Toast.makeText(getActivity(), "Authentication failed: " + task.getException().getLocalizedMessage(),
-//                                    Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                    }
-//                });
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(getActivity(), "Please, fill all fields",
+                    Toast.LENGTH_SHORT).show();
+        } else  {
+            mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Intent intent = new Intent(getActivity(), TabBarActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(getActivity(), "Authentication failed: " + task.getException().getLocalizedMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+        }
     }
 
     public void newMateClick() {
