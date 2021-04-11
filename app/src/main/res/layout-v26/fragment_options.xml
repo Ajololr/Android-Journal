@@ -38,17 +38,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/seek_bar_font_size">
 
-            <RadioButton
-                android:id="@+id/radio_ru"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/russian" />
+        <RadioButton
+            android:id="@+id/radio_ru"
+            android:layout_width="wrap_content"
+            android:layout_height="23dp"
+            android:text="@string/russian" />
 
-            <RadioButton
-                android:id="@+id/radio_eng"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/english" />
+        <RadioButton
+            android:id="@+id/radio_eng"
+            android:layout_width="wrap_content"
+            android:layout_height="23dp"
+            android:text="@string/english"/>
         </RadioGroup>
 
     </LinearLayout>
@@ -118,7 +118,6 @@
             android:id="@+id/theme_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColorLink="#C54D4D"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>

@@ -24,6 +24,8 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import static com.androsov.groupjournal.OptionsFragment.fontSize;
+
 public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudentRecyclerViewAdapter.ViewHolder> {
 
     private final List<Student> mValues;
@@ -79,9 +81,13 @@ public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudent
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mImageView = (ImageView) view.findViewById(R.id.student_avatar);
-            mNameText = (TextView) view.findViewById(R.id.student_name);
-            mBirthdayText = (TextView) view.findViewById(R.id.student_birthday);
+            mImageView = view.findViewById(R.id.student_avatar);
+            mNameText = view.findViewById(R.id.student_name);
+            mBirthdayText = view.findViewById(R.id.student_birthday);
+
+            mBirthdayText.setTextSize(fontSize);
+            mNameText.setTextSize(fontSize);
+
             mView.setOnClickListener(v -> {
                 TabBarActivity tabBarActivity = (TabBarActivity) view.getContext();
                 StudentDetailsFragment studentDetailsFragment = new StudentDetailsFragment(mItem);

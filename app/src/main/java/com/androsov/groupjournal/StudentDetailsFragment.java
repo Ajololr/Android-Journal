@@ -38,6 +38,7 @@ import static android.app.Activity.RESULT_OK;
 import static com.androsov.groupjournal.MainActivity.db;
 import static com.androsov.groupjournal.MainActivity.imagesRef;
 import static com.androsov.groupjournal.MainActivity.mAuth;
+import static com.androsov.groupjournal.OptionsFragment.currentColor;
 import static com.androsov.groupjournal.StudentFragmentList.loadData;
 
 /**
@@ -230,6 +231,13 @@ public class StudentDetailsFragment extends Fragment {
         view.findViewById(R.id.save_btn).setOnClickListener(this::btnSaveClick);
         view.findViewById(R.id.load_video_btn).setOnClickListener(this::loadVideo);
         view.findViewById(R.id.gallery_btn).setOnClickListener(this::showGallery);
+
+
+        if (currentColor != 0) {
+            view.findViewById(R.id.save_btn).setBackgroundColor(currentColor);
+            view.findViewById(R.id.load_video_btn).setBackgroundColor(currentColor);
+            view.findViewById(R.id.gallery_btn).setBackgroundColor(currentColor);
+        }
 
         return view;
     }

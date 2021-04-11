@@ -45,4 +45,12 @@
     <string name="load_video">Load video</string>
     <string name="watch_video">Watch video</string>
     <string name="save">Save</string>
+    <string name="russian">Russian</string>
+    <string name="english">English</string>
+    <string name="language">Language</string>
+    <string name="font_size">Font size</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="color">Color</string>
+    <string name="primary_color">Primary color</string>
+    <string name="logout">Logout</string>
 </resources>
