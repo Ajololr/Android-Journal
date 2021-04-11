@@ -92,7 +92,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Gallery"
+        android:text="@string/gallery"
         app:layout_constraintEnd_toEndOf="@+id/load_video_btn"
         app:layout_constraintStart_toStartOf="@+id/load_video_btn"
         app:layout_constraintTop_toBottomOf="@+id/videoView" />

@@ -3,12 +3,15 @@ package com.androsov.groupjournal;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,8 @@ import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import java.util.Locale;
 
 import yuku.ambilwarna.AmbilWarnaDialog;
 
@@ -102,10 +107,11 @@ public class OptionsFragment extends Fragment {
                 englishButton.setChecked(false);
                 TabBarActivity tabBar = (TabBarActivity) getActivity();
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(tabBar);
-                preferences.edit().putString("language", "ru").apply(); // TODO: Check!
+                preferences.edit().putString("language", "ru").apply();
                 optionWasChange = true;
                 lang = 1;
-                getActivity().recreate();
+                setLocale("ru");
+//                getActivity().recreate();
             }
         });
 
@@ -119,7 +125,8 @@ public class OptionsFragment extends Fragment {
                     preferences.edit().putString("language", "en").apply();
                     optionWasChange = true;
                     lang = 0;
-                    getActivity().recreate();
+                    setLocale("en");
+//                    getActivity().recreate();
                 }
             }
         });
@@ -139,6 +146,16 @@ public class OptionsFragment extends Fragment {
         return view;
     }
 
+    public void setLocale(String lang) {
+        Locale myLocale = new Locale(lang);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.locale = myLocale;
+        res.updateConfiguration(conf, dm);
+        getActivity().recreate();
+    }
+
     public void updateFontSize(){
         TextView fontLabel = view.findViewById(R.id.font_size);
         fontLabel.setText(String.valueOf(fontSize));
@@ -156,11 +173,6 @@ public class OptionsFragment extends Fragment {
         russianButton.setTextSize(fontSize);
         RadioButton englishButton = view.findViewById(R.id.radio_eng);
         englishButton.setTextSize(fontSize);
-
-        Button btn = view.findViewById(R.id.logout_btn);
-        btn.setTextSize(fontSize);
-        btn = view.findViewById(R.id.change_color_btn);
-        btn.setTextSize(fontSize);
     }
 
     public void changeColorPressed(){

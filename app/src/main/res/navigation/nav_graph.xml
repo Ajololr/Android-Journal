@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.androsov.groupjournal.SignInFragment"
-        android:label="Sign In"
+        android:label="@string/title_sign_in"
         tools:layout="@layout/fragment_sign_in" >
         <action
             android:id="@+id/action_signInFragment_to_registerFragment"
@@ -16,6 +16,6 @@
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.androsov.groupjournal.RegisterFragment"
-        android:label="fragment_register"
+        android:label="@string/add_new_group_mate"
         tools:layout="@layout/fragment_register" />
 </navigation>

@@ -37,7 +37,7 @@
         android:id="@+id/register_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/create_new_group_mate"
+        android:text="@string/add_new_group_mate"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/student_avatar_picker"
         app:layout_constraintHorizontal_bias="0.497"

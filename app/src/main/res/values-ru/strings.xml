@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Журнал группы</string>
+    <string name="email">Почта</string>
+    <string name="password">Пароль</string>
+    <string name="login">Войти</string>
+    <string name="invalid_username">Неверное имя</string>
+    <string name="birthday_txt">День рождения</string>
+    <string name="create">Создать</string>
+    <string name="first_name">Имя</string>
+    <string name="second_name">Отчество</string>
+    <string name="last_name">Фамилия</string>
+    <string name="title_activity_tab_bar">MainActivity</string>
+    <string name="title_group">Группа</string>
+    <string name="title_map">Карта</string>
+    <string name="title_settings">Настройки</string>
+    <string name="student_image">Фото студента</string>
+    <string name="student_list">Список студентов</string>
+    <string name="latitude">Широта</string>
+    <string name="longitude">Долгота</string>
+    <string name="load_video">Загрузить видео</string>
+    <string name="watch_video">Посмотреть видео</string>
+    <string name="save">Сохранить</string>
+    <string name="russian">Русский</string>
+    <string name="english">Английский</string>
+    <string name="language">Язык</string>
+    <string name="font_size">Размер шрифта</string>
+    <string name="dark_mode">Тёмная тема</string>
+    <string name="color">Цвет</string>
+    <string name="primary_color">Основой цвет</string>
+    <string name="logout">Выйти</string>
+    <string name="welcome_back">Добро пожаловать!</string>
+    <string name="gallery">Галерея</string>
+    <string name="add_new_group_mate">Добавить нового одногруппника</string>
+    <string name="title_sign_in">Войти</string>
+</resources>
