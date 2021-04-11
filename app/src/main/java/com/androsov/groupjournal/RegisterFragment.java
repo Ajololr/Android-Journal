@@ -2,12 +2,14 @@ package com.androsov.groupjournal;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -119,6 +121,14 @@ public class RegisterFragment extends Fragment {
                     return null;
                 });
         });
+
+        SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        int appColor = app_preferences.getInt("color", 0);
+
+        if (appColor != 0) {
+            button.setBackgroundColor(appColor);
+        }
+
         return view;
     }
 

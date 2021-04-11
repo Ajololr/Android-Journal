@@ -1,14 +1,18 @@
 package com.androsov.groupjournal;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.ActivityNavigator;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,6 +90,16 @@ public class SignInFragment extends Fragment {
 
         Button loginBtn = (Button) view.findViewById(R.id.login_btn);
         loginBtn.setOnClickListener(v -> btnLoginClick());
+
+
+        SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        int appColor = app_preferences.getInt("color", 0);
+
+        if (appColor != 0) {
+            loginBtn.setBackgroundColor(appColor);
+        }
+
+
         return view;
     }
 

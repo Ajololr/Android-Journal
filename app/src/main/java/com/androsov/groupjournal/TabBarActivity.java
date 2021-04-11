@@ -1,15 +1,20 @@
 package com.androsov.groupjournal;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -42,6 +47,7 @@ public class TabBarActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_tab_bar);
 
+
         if (appColor != 0) {
             OptionsFragment.currentColor = appColor;
 
@@ -49,6 +55,8 @@ public class TabBarActivity extends AppCompatActivity {
             toolbar.setItemRippleColor(ColorStateList.valueOf(appColor));
             toolbar.setItemIconTintList(ColorStateList.valueOf(appColor));
             toolbar.setItemTextColor(ColorStateList.valueOf(appColor));
+
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(appColor));
         }
 
         mTabBarNav = findViewById(R.id.nav_view);
