@@ -151,7 +151,7 @@ public class StudentDetailsFragment extends Fragment {
 
     private void showGallery(View view) {
         TabBarActivity tabBarActivity = (TabBarActivity) view.getContext();
-        GalleryFragment galleryFragment = new GalleryFragment(studentData.images);
+        GalleryFragment galleryFragment = new GalleryFragment(studentData.images, studentData);
         tabBarActivity.setFragment(galleryFragment, "");
         tabBarActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

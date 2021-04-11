@@ -20,10 +20,12 @@ public class GalleryFragment extends Fragment {
     private int mColumnCount = 3;
     List<String> images;
     View view;
+    Student student;
 
 
-    public GalleryFragment(List<String> urls) {
+    public GalleryFragment(List<String> urls, Student student) {
         images = urls;
+        this.student = student;
     }
 
     public GalleryFragment() {
@@ -38,7 +40,7 @@ public class GalleryFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyGalleryRecyclerViewAdapter(images));
+            recyclerView.setAdapter(new MyGalleryRecyclerViewAdapter(images, getContext(), this, student));
         }
     }
 

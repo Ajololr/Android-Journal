@@ -47,7 +47,6 @@ public class OptionsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_options, container, false);
 
         updateFontSize();
@@ -111,23 +110,18 @@ public class OptionsFragment extends Fragment {
                 optionWasChange = true;
                 lang = 1;
                 setLocale("ru");
-//                getActivity().recreate();
             }
         });
 
-        englishButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    russianButton.setChecked(false);
-                    TabBarActivity tabBar = (TabBarActivity) getActivity();
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(tabBar);
-                    preferences.edit().putString("language", "en").apply();
-                    optionWasChange = true;
-                    lang = 0;
-                    setLocale("en");
-//                    getActivity().recreate();
-                }
+        englishButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked){
+                russianButton.setChecked(false);
+                TabBarActivity tabBar = (TabBarActivity) getActivity();
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(tabBar);
+                preferences.edit().putString("language", "en").apply();
+                optionWasChange = true;
+                lang = 0;
+                setLocale("en");
             }
         });
 
@@ -192,6 +186,7 @@ public class OptionsFragment extends Fragment {
                 TabBarActivity tabBar = (TabBarActivity) getActivity();
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(tabBar);
                 preferences.edit().putInt("color", color).apply();
+                optionWasChange = true;
                 getActivity().recreate();
             }
         });
