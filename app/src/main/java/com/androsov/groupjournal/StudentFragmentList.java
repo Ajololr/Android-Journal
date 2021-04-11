@@ -27,15 +27,15 @@ import static com.androsov.groupjournal.MainActivity.db;
 
 
 public class StudentFragmentList extends Fragment {
-    public MyStudentRecyclerViewAdapter recyclerViewAdapter;
-    View view;
+    static public MyStudentRecyclerViewAdapter recyclerViewAdapter;
+    static View view;
 
     private static final String ARG_COLUMN_COUNT = "column-count";
-    private int mColumnCount = 2;
-    private ArrayList<Student> studentArrayList;
+    private static int mColumnCount = 2;
+    private static ArrayList<Student> studentArrayList;
 
 
-     public StudentFragmentList() {
+    public static void loadData() {
         studentArrayList = new ArrayList<>();
         db.collection("group mates")
                 .get()
@@ -58,7 +58,11 @@ public class StudentFragmentList extends Fragment {
                 });
     }
 
-    public void setData() {
+     public StudentFragmentList() {
+         loadData();
+    }
+
+    public static void setData() {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
@@ -74,7 +78,6 @@ public class StudentFragmentList extends Fragment {
         }
     }
 
-    @SuppressWarnings("unused")
     public static StudentFragmentList newInstance(int columnCount) {
         StudentFragmentList fragment = new StudentFragmentList();
         Bundle args = new Bundle();

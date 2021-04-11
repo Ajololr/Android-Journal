@@ -38,6 +38,7 @@ import static android.app.Activity.RESULT_OK;
 import static com.androsov.groupjournal.MainActivity.db;
 import static com.androsov.groupjournal.MainActivity.imagesRef;
 import static com.androsov.groupjournal.MainActivity.mAuth;
+import static com.androsov.groupjournal.StudentFragmentList.loadData;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -128,6 +129,8 @@ public class StudentDetailsFragment extends Fragment {
             .addOnSuccessListener(documentReference -> {
                 Toast.makeText(getActivity(), "Updated group mate",
                         Toast.LENGTH_LONG).show();
+
+                loadData();
             })
             .addOnFailureListener(e -> Toast.makeText(getActivity(),"Error adding document: " + e,
                     Toast.LENGTH_SHORT).show());
@@ -143,6 +146,13 @@ public class StudentDetailsFragment extends Fragment {
                     Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    private void showGallery(View view) {
+        TabBarActivity tabBarActivity = (TabBarActivity) view.getContext();
+        GalleryFragment galleryFragment = new GalleryFragment(studentData.images);
+        tabBarActivity.setFragment(galleryFragment, "");
+        tabBarActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -185,6 +195,7 @@ public class StudentDetailsFragment extends Fragment {
                                         videoView.setVideoURI(studentVideoUri);
                                         videoView.start();
 
+                                    loadData();
                                 })
                                 .addOnFailureListener(e -> Toast.makeText(getActivity(),"Error adding document: " + e,
                                         Toast.LENGTH_SHORT).show());
@@ -218,6 +229,7 @@ public class StudentDetailsFragment extends Fragment {
 
         view.findViewById(R.id.save_btn).setOnClickListener(this::btnSaveClick);
         view.findViewById(R.id.load_video_btn).setOnClickListener(this::loadVideo);
+        view.findViewById(R.id.gallery_btn).setOnClickListener(this::showGallery);
 
         return view;
     }
