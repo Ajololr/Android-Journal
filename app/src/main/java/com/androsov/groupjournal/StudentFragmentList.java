@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,6 +30,7 @@ import static com.androsov.groupjournal.MainActivity.db;
 public class StudentFragmentList extends Fragment {
     static public MyStudentRecyclerViewAdapter recyclerViewAdapter;
     static View view;
+    private SearchView searchView;
 
     private static final String ARG_COLUMN_COUNT = "column-count";
     private static int mColumnCount = 2;
@@ -64,9 +66,11 @@ public class StudentFragmentList extends Fragment {
 
     public static void setData() {
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+        View rv = view.findViewById(R.id.list);
+
+        if (rv instanceof RecyclerView) {
+            Context context = rv.getContext();
+            RecyclerView recyclerView = (RecyclerView) rv;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -101,6 +105,22 @@ public class StudentFragmentList extends Fragment {
          view = inflater.inflate(R.layout.fragment_student_list, container, false);
 
         setData();
+
+        searchView = view.findViewById(R.id.search);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                recyclerViewAdapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                recyclerViewAdapter.getFilter().filter(query);
+                return false;
+            }
+        });
+
         return view;
     }
 }

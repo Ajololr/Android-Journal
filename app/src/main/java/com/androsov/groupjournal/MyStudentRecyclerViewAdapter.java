@@ -11,6 +11,8 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,13 +24,17 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.androsov.groupjournal.OptionsFragment.fontSize;
+import static com.androsov.groupjournal.StudentFragmentList.setData;
 
-public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudentRecyclerViewAdapter.ViewHolder> {
+public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudentRecyclerViewAdapter.ViewHolder> implements Filterable {
 
     private final List<Student> mValues;
+    private static List<Student> studentsFiltered = new ArrayList<>();
+    public static boolean isFiltering = false;
 
     public MyStudentRecyclerViewAdapter(List<Student> items) {
         mValues = items;
@@ -44,15 +50,22 @@ public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudent
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mImageView.setImageBitmap(getImageBitmap(mValues.get(position).images.get(0)));
-        holder.mNameText.setText(mValues.get(position).firstName + " " + mValues.get(position).lastName + " " + mValues.get(position).secondName);
-        holder.mBirthdayText.setText(new SimpleDateFormat("yyyy-mm-dd").format(mValues.get(position).birthday));
+        if (isFiltering || !studentsFiltered.isEmpty()) {
+            holder.mItem = studentsFiltered.get(position);
+            holder.mImageView.setImageBitmap(getImageBitmap(studentsFiltered.get(position).images.get(0)));
+            holder.mNameText.setText(studentsFiltered.get(position).firstName + " " + studentsFiltered.get(position).lastName + " " + studentsFiltered.get(position).secondName);
+            holder.mBirthdayText.setText(new SimpleDateFormat("yyyy-mm-dd").format(studentsFiltered.get(position).birthday));
+        } else {
+            holder.mItem = mValues.get(position);
+            holder.mImageView.setImageBitmap(getImageBitmap(mValues.get(position).images.get(0)));
+            holder.mNameText.setText(mValues.get(position).firstName + " " + mValues.get(position).lastName + " " + mValues.get(position).secondName);
+            holder.mBirthdayText.setText(new SimpleDateFormat("yyyy-mm-dd").format(mValues.get(position).birthday));
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return isFiltering ? studentsFiltered.size() : mValues.size();
     }
 
     public static Bitmap getImageBitmap(String url) {
@@ -69,6 +82,41 @@ public class MyStudentRecyclerViewAdapter extends RecyclerView.Adapter<MyStudent
         } catch (IOException e) {
         }
         return bm;
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                String charString = charSequence.toString();
+                if (charString.isEmpty()) {
+                    isFiltering = false;
+                    studentsFiltered = mValues;
+                } else {
+                    List<Student> filteredList = new ArrayList<>();
+                    for (Student row : mValues) {
+                        if ((row.lastName + row.firstName + row.secondName).toLowerCase().contains(charString.toLowerCase())) {
+                            filteredList.add(row);
+                        }
+                    }
+
+                    studentsFiltered = filteredList;
+                    isFiltering = true;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = studentsFiltered;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                isFiltering = true;
+                studentsFiltered = (ArrayList<Student>) filterResults.values;
+                setData();
+            }
+        };
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
